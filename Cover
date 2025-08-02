@@ -1,1 +1,579 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jornal Vida em Sociedade</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .jornal-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .jornal-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .jornal-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="crosses" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M10,3 L10,17 M3,10 L17,10" stroke="rgba(255,255,255,0.1)" stroke-width="1" fill="none"/></pattern></defs><rect width="100" height="100" fill="url(%23crosses)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .jornal-titulo {
+            position: relative;
+            z-index: 2;
+        }
+
+        .jornal-titulo h1 {
+            font-size: 3.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: -1px;
+        }
+
+        .jornal-titulo .subtitulo {
+            font-size: 1.3em;
+            font-style: italic;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .jornal-data {
+            font-size: 1em;
+            opacity: 0.8;
+            border-top: 1px solid rgba(255,255,255,0.3);
+            padding-top: 10px;
+            margin-top: 15px;
+        }
+
+        .jornal-content {
+            padding: 40px;
+        }
+
+        .secao-titulo {
+            font-size: 2em;
+            color: #1e3c72;
+            border-bottom: 3px solid #1e3c72;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .secao-titulo::after {
+            content: '✟';
+            position: absolute;
+            right: 0;
+            top: 0;
+            color: #2a5298;
+            font-size: 1.2em;
+        }
+
+        .eventos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .evento-card {
+            background: white;
+            border: 1px solid #e0e6ed;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .evento-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .evento-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #1e3c72, #2a5298, #3b82f6);
+        }
+
+        .evento-imagem {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid #e0e6ed;
+        }
+
+        .evento-conteudo {
+            padding: 20px;
+        }
+
+        .evento-titulo {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #1e3c72;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .evento-data {
+            font-size: 1em;
+            color: #666;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .evento-data::before {
+            content: '📅';
+            font-size: 1.1em;
+        }
+
+        .evento-local {
+            font-size: 0.9em;
+            color: #888;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .evento-local::before {
+            content: '📍';
+            font-size: 1em;
+        }
+
+        .evento-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .evento-link:hover {
+            background: linear-gradient(135deg, #2a5298, #3b82f6);
+            transform: translateY(-1px);
+        }
+
+        .adicionar-evento {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.8em;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .adicionar-evento:hover {
+            background: linear-gradient(135deg, #2a5298, #3b82f6);
+            transform: scale(1.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e6ed;
+        }
+
+        .modal-header h2 {
+            color: #1e3c72;
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        .modal-header p {
+            color: #666;
+            font-style: italic;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #1e3c72;
+            font-weight: bold;
+            font-size: 1em;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 10px rgba(42, 82, 152, 0.2);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2a5298, #3b82f6);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e0e6ed;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        .evento-vazio {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .evento-vazio h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #1e3c72;
+        }
+
+        .evento-vazio p {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .evento-card:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+        }
+
+        .rodape {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #e0e6ed;
+            color: #666;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .jornal-titulo h1 {
+                font-size: 2.5em;
+            }
+            
+            .eventos-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .jornal-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="jornal-container">
+        <div class="jornal-header">
+            <div class="jornal-titulo">
+                <h1>📰 VIDA EM SOCIEDADE</h1>
+                <p class="subtitulo">Jornal Católico - Eventos & Celebrações</p>
+                <div class="jornal-data" id="dataAtual"></div>
+            </div>
+        </div>
+
+        <div class="jornal-content">
+            <h2 class="secao-titulo">Próximos Eventos</h2>
+            <div class="eventos-grid" id="eventosGrid">
+                <!-- Eventos serão inseridos aqui -->
+            </div>
+        </div>
+
+        <div class="rodape">
+            <p>✟ Que Deus abençoe nossa comunidade ✟</p>
+            <p><em>"Onde dois ou três estiverem reunidos em meu nome, ali estarei no meio deles." - Mt 18:20</em></p>
+        </div>
+    </div>
+
+    <button class="adicionar-evento" onclick="abrirModal()" title="Adicionar novo evento">
+        ✚
+    </button>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✟ Adicionar Novo Evento</h2>
+                <p>Compartilhe as celebrações com nossa comunidade</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="titulo">📝 Título do Evento:</label>
+                <input type="text" id="titulo" placeholder="Ex: Missa do Sagrado Coração de Jesus">
+            </div>
+
+            <div class="form-group">
+                <label for="data">📅 Data e Horário:</label>
+                <input type="text" id="data" placeholder="Ex: Domingo, 5 de setembro - 9h às 10h">
+            </div>
+
+            <div class="form-group">
+                <label for="local">📍 Local:</label>
+                <input type="text" id="local" placeholder="Ex: Santuário São Judas Tadeu - Cosme Velho">
+            </div>
+
+            <div class="form-group">
+                <label for="imagem">🖼️ URL da Imagem:</label>
+                <input type="url" id="imagem" placeholder="Cole aqui o link da imagem do convite">
+            </div>
+
+            <div class="form-group">
+                <label for="link">🔗 Link do Evento (opcional):</label>
+                <input type="url" id="link" placeholder="Link do Google Agenda, WhatsApp, etc.">
+            </div>
+
+            <div class="form-group">
+                <label for="descricao">📄 Descrição (opcional):</label>
+                <textarea id="descricao" placeholder="Informações adicionais sobre o evento..."></textarea>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="adicionarEvento()">Publicar Evento</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let eventos = [];
+
+        // Atualizar data atual
+        function atualizarData() {
+            const agora = new Date();
+            const opcoes = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            document.getElementById('dataAtual').textContent = 
+                agora.toLocaleDateString('pt-BR', opcoes);
+        }
+
+        function abrirModal() {
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modal').style.display = 'none';
+            limparFormulario();
+        }
+
+        function limparFormulario() {
+            document.getElementById('titulo').value = '';
+            document.getElementById('data').value = '';
+            document.getElementById('local').value = '';
+            document.getElementById('imagem').value = '';
+            document.getElementById('link').value = '';
+            document.getElementById('descricao').value = '';
+        }
+
+        function adicionarEvento() {
+            const titulo = document.getElementById('titulo').value.trim();
+            const data = document.getElementById('data').value.trim();
+            const local = document.getElementById('local').value.trim();
+            const imagem = document.getElementById('imagem').value.trim();
+            const link = document.getElementById('link').value.trim();
+            const descricao = document.getElementById('descricao').value.trim();
+
+            if (!titulo || !data || !local) {
+                alert('Por favor, preencha pelo menos o título, data e local!');
+                return;
+            }
+
+            const novoEvento = {
+                id: Date.now(),
+                titulo: titulo,
+                data: data,
+                local: local,
+                imagem: imagem || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="350" height="200" viewBox="0 0 350 200"%3E%3Crect width="350" height="200" fill="%23f8f9fa"/%3E%3Ctext x="175" y="100" text-anchor="middle" dy=".3em" fill="%231e3c72" font-family="Georgia, serif" font-size="18"%3E✟ Evento Católico ✟%3C/text%3E%3C/svg%3E',
+                link: link,
+                descricao: descricao
+            };
+
+            eventos.push(novoEvento);
+            renderizarEventos();
+            fecharModal();
+        }
+
+        function removerEvento(id) {
+            if (confirm('Tem certeza que deseja remover este evento?')) {
+                eventos = eventos.filter(evento => evento.id !== id);
+                renderizarEventos();
+            }
+        }
+
+        function renderizarEventos() {
+            const grid = document.getElementById('eventosGrid');
+            
+            if (eventos.length === 0) {
+                grid.innerHTML = `
+                    <div class="evento-vazio">
+                        <h3>📰 Bem-vindo ao Jornal!</h3>
+                        <p>Clique no botão ✚ para adicionar o primeiro evento</p>
+                        <p><em>Vamos compartilhar as bênçãos de nossa comunidade!</em></p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = eventos.map(evento => `
+                <div class="evento-card">
+                    <button class="delete-btn" onclick="removerEvento(${evento.id})" title="Remover evento">×</button>
+                    <img src="${evento.imagem}" alt="${evento.titulo}" class="evento-imagem" 
+                         onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'350\\' height=\\'200\\' viewBox=\\'0 0 350 200\\'%3E%3Crect width=\\'350\\' height=\\'200\\' fill=\\'%23f8f9fa\\'/%3E%3Ctext x=\\'175\\' y=\\'100\\' text-anchor=\\'middle\\' dy=\\'.3em\\' fill=\\'%231e3c72\\' font-family=\\'Georgia, serif\\' font-size=\\'18\\'%3E✟ Evento Católico ✟%3C/text%3E%3C/svg%3E'">
+                    <div class="evento-conteudo">
+                        <h3 class="evento-titulo">${evento.titulo}</h3>
+                        <div class="evento-data">${evento.data}</div>
+                        <div class="evento-local">${evento.local}</div>
+                        ${evento.descricao ? `<p style="color: #666; margin-bottom: 15px; font-style: italic;">${evento.descricao}</p>` : ''}
+                        ${evento.link ? `<a href="${evento.link}" class="evento-link" target="_blank">Ver Detalhes</a>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Fechar modal clicando fora
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                fecharModal();
+            }
+        });
+
+        // Inicializar
+        atualizarData();
+        renderizarEventos();
+    </script>
+</body>
+</html>
