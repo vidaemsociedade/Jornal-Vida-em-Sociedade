@@ -1,2 +1,2 @@
-# Jornal Vida em Sociedade-
+# Jornal Vida em Sociedade
 Notícias
